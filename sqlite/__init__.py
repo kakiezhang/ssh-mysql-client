@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import os
 import sqlite3
+import logger
+
+log = logger.get(__name__)
 
 
 DIR_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -41,11 +42,11 @@ class Base(object):
         if self._conn:
             return self._conn
         try:
-            print('new conn')
+            log.debug('new conn')
             self._conn = sqlite3.connect(DB_LOCATION)
             return self._conn
         except sqlite3.Error as e:
-            print(e)
+            log.warning(e)
             self._conn.close()
 
     @property
@@ -53,11 +54,11 @@ class Base(object):
         if self._cursor:
             return self._cursor
         try:
-            print('new cursor')
+            log.debug('new cursor')
             self._cursor = self.conn.cursor()
             return self._cursor
         except sqlite3.Error as e:
-            print(e)
+            log.warning(e)
             self._cursor.close()
             self.conn.close()
 
@@ -65,13 +66,13 @@ class Base(object):
         try:
             self.cursor.execute(sql)
         except sqlite3.Error as e:
-            print(e)
+            log.warning(e)
 
     def commit(self):
         try:
             self.conn.commit()
         except sqlite3.Error as e:
-            print(e)
+            log.warning(e)
         finally:
             self.conn.close()
 
@@ -85,7 +86,7 @@ class Base(object):
             self.cursor.execute(sql, params)
             rv = self.cursor.fetchone()
         except sqlite3.Error as e:
-            print(e)
+            log.warning(e)
         finally:
             self.disconn()
         return rv
@@ -96,7 +97,7 @@ class Base(object):
             self.cursor.execute(sql, params)
             rv = self.cursor.fetchall()
         except sqlite3.Error as e:
-            print(e)
+            log.warning(e)
         finally:
             self.disconn()
         return rv
@@ -108,7 +109,7 @@ class Base(object):
             if self.cursor.rowcount > 0:
                 _id = self.cursor.lastrowid
         except sqlite3.Error as e:
-            app.logger.error(e)
+            log.warning(e)
         finally:
             self.cursor.close()
         return _id
@@ -117,6 +118,6 @@ class Base(object):
         try:
             self.cursor.execute(sql)
         except sqlite3.Error as e:
-            app.logger.error(e)
+            log.warning(e)
         finally:
             self.cursor.close()

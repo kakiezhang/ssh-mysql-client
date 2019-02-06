@@ -1,17 +1,18 @@
-# -*- coding: utf-8 -*-
-
 import os
 import subprocess
 import shlex
+import logger
+
+log = logger.get(__name__)
 
 
 def run(cmd):
-    print('[Run command]: {}'.format(cmd))
+    log.debug('[Run command]: {}'.format(cmd))
     os.system(cmd)
 
 
 def run_with_output(cmd, shell=False):
-    print('[Run command]: {}'.format(cmd))
+    log.debug('[Run command]: {}'.format(cmd))
     fmt_cmd = shlex.split(cmd)
     p = subprocess.Popen(fmt_cmd, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -22,12 +23,12 @@ def run_with_output(cmd, shell=False):
         if line:
             if isinstance(line, bytes):
                 line = line.decode()
-                print('[Output]: {}'.format(line))
-                rst.append(line)
+            log.debug('[Output]: {}'.format(line))
+            rst.append(line)
 
     if p.returncode == 0:
-        print('[Execution]: OK')
-        return rst
+        log.debug('[Execution]: OK')
+        return rst, True
     else:
-        print('[Execution]: FAILED')
-        return None
+        log.debug('[Execution]: FAILED')
+        return None, False

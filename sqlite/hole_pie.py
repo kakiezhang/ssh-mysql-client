@@ -1,6 +1,7 @@
-# -*- coding: utf-8 -*-
-
 from . import Base
+import logger
+
+log = logger.get(__name__)
 
 
 class HolePie(Base):
@@ -75,7 +76,7 @@ class HolePie(Base):
             )
         )
         sql = sql.format(self.table_name, *params)
-        print('sql: %s' % sql)
+        log.debug('sql: %s' % sql)
         _id = self.insert(sql)
         self.commit()
         return _id
@@ -86,7 +87,7 @@ class HolePie(Base):
         WHERE id={}
         '''
         sql = sql.format(self.table_name, pkid)
-        print('sql: %s' % sql)
+        log.debug('sql: %s' % sql)
         self.delete(sql)
         self.commit()
 
@@ -98,7 +99,7 @@ class HolePie(Base):
         ORDER BY id DESC
         LIMIT 1
         '''.format(self.full_fields, self.table_name)
-        print('sql: %s' % sql)
+        log.debug('sql: %s' % sql)
         rv = self.fetchone(sql, aim_host, aim_port, aim_user)
         return rv
 
@@ -110,7 +111,7 @@ class HolePie(Base):
         ORDER BY id DESC
         LIMIT 1
         '''.format(self.full_fields, self.table_name)
-        print('sql: %s' % sql)
+        log.debug('sql: %s' % sql)
         rv = self.fetchone(sql, alias)
         return rv
 
@@ -120,7 +121,7 @@ class HolePie(Base):
         FROM {}
         ORDER BY id 
         '''.format(self.full_fields, self.table_name)
-        print('sql: %s' % sql)
+        log.debug('sql: %s' % sql)
         rv = self.fetchall(sql)
         return rv
 
@@ -141,14 +142,14 @@ def test_insert():
 
 def test_get_alias():
     rv = HolePie().get_by_alias('fruit')
-    print(rv)
+    log.debug(rv)
 
 
 def test_get_aim():
     rv = HolePie().get_by_aim('rds.xxxxx.com', '3306', 'root')
-    print(rv)
+    log.debug(rv)
 
 
 def test_list_all():
     rv = HolePie().list_all()
-    print(rv)
+    log.debug(rv)
