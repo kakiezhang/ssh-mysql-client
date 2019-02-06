@@ -1,8 +1,8 @@
-""" 
+""" mysqlclient
 Command: 
 ./smc 
 OR 
-python3 index.py 
+python3 client.py 
 """
 
 import sys
@@ -67,7 +67,7 @@ def lost_ssh_conn():
     shell.run(command)
 
 
-def init_ssh_conn():
+def init_globals():
     rv = HolePie().get_by_alias(alias)
     if not rv:
         log.warning('Proxy[%s] not exist, abort!' % alias)
@@ -112,11 +112,12 @@ def build_mysql_cli_conn():
         aim_pwd=aim_pwd,
         local_port=local_port,
     )
+    log.info(command)
     shell.run(command)
 
 
 def connect_mysql():
-    if init_ssh_conn():
+    if init_globals():
         build_ssh_conn()
         build_mysql_cli_conn()
 
@@ -196,12 +197,12 @@ def main():
             log.warning('Overwrite proxy[%s] failed!' % alias)
 
     elif action == 'build_ssh':
-        if init_ssh_conn():
+        if init_globals():
             build_ssh_conn()
             log.info('Connect ssh proxy[%s] successfully!' % alias)
 
     elif action == 'lost_ssh':
-        if init_ssh_conn():
+        if init_globals():
             lost_ssh_conn()
             log.info('Disconnect ssh proxy[%s] successfully!' % alias)
 
