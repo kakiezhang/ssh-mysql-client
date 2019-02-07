@@ -21,10 +21,16 @@ log = logger.get(__name__)
 def assign_argument():
     ap = argparse.ArgumentParser()
 
-    ap.add_argument('alias', type=str, help='choose a MySQL proxy alias')
-    ap.add_argument('-c', '--create', help='create a MySQL proxy', action='store_true')
-    ap.add_argument('-o', '--overwrite', help='overwrite a MySQL proxy', action='store_true')
-    ap.add_argument('-s', '--signal', type=str, choices=['start', 'stop'], help='build or lost ssh proxy')
+    list_group = ap.add_argument_group(title='List options')
+    alias_group = ap.add_argument_group(title='Alias options')
+
+    list_group.add_argument('-l', '--list', help='list all MySQL proxies alias', action='store_true')
+    alias_group.add_argument('-n', '--alias', type=str, help='choose a MySQL proxy alias')
+
+    sp = alias_group.add_mutually_exclusive_group()
+    sp.add_argument('-c', '--create', help='create a MySQL proxy', action='store_true')
+    sp.add_argument('-o', '--overwrite', help='overwrite a MySQL proxy', action='store_true')
+    sp.add_argument('-s', '--signal', type=str, choices=['start', 'stop'], help='build or lost ssh proxy')
 
     options = ap.parse_args()
 
@@ -32,6 +38,10 @@ def assign_argument():
 
     alias = options.alias
     signal = options.signal
+
+    if options.list:
+        action = 'list'
+        return
 
     action = 'connect' if not options.create else 'create'
     action = action if not options.overwrite else 'overwrite'
@@ -41,7 +51,10 @@ def assign_argument():
     elif signal == 'stop':
         action = 'lost_ssh'
 
-    log.debug('[Param]: action={}, alias={}'.format(action, alias))
+    if not alias:
+        raise Exception('Required: -n ALIAS or --alias ALIAS')
+
+    return
 
 
 def random_free_port(retry=5):
@@ -166,9 +179,18 @@ def create_proxy():
 
 
 def main():
-    assign_argument()
+    try:
+        assign_argument()
+        log.debug('[Param]: action={}, alias={}'.format(action, alias))
+    except Exception as e:
+        log.warning(e)
+        return
 
-    if action == 'connect':
+    if action == 'list':
+        names = ', '.join([v[1] for v in HolePie().list_all()])
+        log.info('List existed proxies: \n -> %s' % names)
+
+    elif action == 'connect':
         connect_mysql()
 
     elif action == 'create':
