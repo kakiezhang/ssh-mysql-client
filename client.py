@@ -28,6 +28,7 @@ def assign_argument():
     alias_group.add_argument('-n', '--alias', type=str, help='choose a MySQL proxy alias')
 
     sp = alias_group.add_mutually_exclusive_group()
+    sp.add_argument('--config', help='show a MySQL proxy config', action='store_true')
     sp.add_argument('-c', '--create', help='create a MySQL proxy', action='store_true')
     sp.add_argument('-o', '--overwrite', help='overwrite a MySQL proxy', action='store_true')
     sp.add_argument('-s', '--signal', type=str, choices=['start', 'stop'], help='build or lost ssh proxy')
@@ -44,6 +45,7 @@ def assign_argument():
         return
 
     action = 'connect' if not options.create else 'create'
+    action = action if not options.config else 'config'
     action = action if not options.overwrite else 'overwrite'
 
     if signal == 'start':
@@ -187,11 +189,18 @@ def main():
         return
 
     if action == 'list':
-        names = ', '.join([v[1] for v in HolePie().list_all()])
-        log.info('List existed proxies: \n -> %s' % names)
+        names = '\n'.join([v[1] for v in HolePie().list_all()])
+        log.info('Proxies existed: \n\n%s' % names)
 
     elif action == 'connect':
         connect_mysql()
+
+    elif action == 'config':
+        rv = HolePie().get_by_alias(alias)
+        if not rv:
+            log.warning('Proxy[%s] not found!' % alias)
+        else:
+            log.info('Proxy[{}] config: \n {}'.format(alias, consts.TABLE_CONTENT % rv))
 
     elif action == 'create':
         _ = HolePie().get_by_alias(alias)

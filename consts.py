@@ -41,3 +41,19 @@ QUESTIONS = [
         'empty_allowed': True,
     },
 ]
+
+TABLE_CONTENT = '''
+id: %s
+alias: %s
+aim_host: %s
+aim_port: %s
+aim_user: %s
+aim_pwd: %s
+local_port: %s
+proxy_host: %s
+proxy_port: %s
+proxy_user: %s
+proxy_pwd: %s
+last_conn_time: %s
+create_time: %s
+update_time: %s'''
