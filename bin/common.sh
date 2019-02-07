@@ -37,4 +37,4 @@ if [[ -x $ROOT/../.virtualenv/bin/python ]]; then
   PYTHON=$(realpath "$ROOT/../.virtualenv/bin/python" -L -s)
 fi
 
-echo "python binary: $PYTHON"
+# echo "python binary: $PYTHON"

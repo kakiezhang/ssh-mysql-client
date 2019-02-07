@@ -7,8 +7,10 @@ def setup(level=logging.INFO):
     logger = logging.getLogger(ROOT_NAME)
     logger.setLevel(level)
 
+    # formatter = logging.Formatter(
+    #     '[%(asctime)s %(levelname)s %(filename)s:%(lineno)d] %(message)s')
     formatter = logging.Formatter(
-        '[%(asctime)s %(levelname)s %(filename)s:%(lineno)d] %(message)s')
+        '%(message)s')
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)
     logger.addHandler(handler)
