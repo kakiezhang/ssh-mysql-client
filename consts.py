@@ -1,4 +1,4 @@
-HOLE_COMMAND = 'ssh -fNg -L {local_port}:{aim_host}:{aim_port} {proxy_user}@{proxy_host} -P {proxy_port}'
+HOLE_COMMAND = 'ssh -fNg -L {local_port}:{aim_host}:{aim_port} {proxy_user}@{proxy_host} -p {proxy_port}'
 
 LOCAL_CLI_COMMAND = 'mysql -h127.0.0.1 -u"{aim_user}" -p"{aim_pwd}" -P{local_port} -A'
 LOCAL_DUMP_COMMAND = 'mysqldump -h127.0.0.1 -u"{aim_user}" -p"{aim_pwd}" -P{local_port} {extra_options}'
